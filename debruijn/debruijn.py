@@ -469,6 +469,21 @@ def main() -> None:  # pragma: no cover
     # Get arguments
     args = get_arguments()
 
+    # 1. Lecture du fichier et construction du graphe
+    kmer_dict = build_kmer_dict(args.fastq_file, args.kmer_size)
+    graph = build_graph(kmer_dict)
+
+    # 2. Résolution des bulles
+    graph = simplify_bubbles(graph)
+
+    # 3. Résolution des pointes d'entrée et de sortie
+    graph = solve_entry_tips(graph, get_starting_nodes(graph))
+    graph = solve_out_tips(graph, get_sink_nodes(graph))
+
+    # 4. Écriture des contigs
+    contigs = get_contigs(graph, get_starting_nodes(graph), get_sink_nodes(graph))
+    save_contigs(contigs, args.output_file)
+
     # Fonctions de dessin du graphe
     # A decommenter si vous souhaitez visualiser un petit
     # graphe
